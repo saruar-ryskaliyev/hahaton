@@ -1,16 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from typing import List
-
-
 import models, schemas
+from database import get_db
+from fastapi import HTTPException
 
-from database import SessionLocal, get_db  # Import your database session setup
 
 router = APIRouter()
 
-
-@router.post("/banks/", response_model=schemas.Bank)
+@router.post("/banks/", response_model=schemas.BankInDB)
 def create_bank(bank: schemas.BankCreate, db: Session = Depends(get_db)):
     db_bank = models.Bank(name=bank.name)
     db.add(db_bank)
@@ -18,8 +15,7 @@ def create_bank(bank: schemas.BankCreate, db: Session = Depends(get_db)):
     db.refresh(db_bank)
     return db_bank
 
-
-@router.post("/cards/", response_model=schemas.BankCard)
+@router.post("/cards/", response_model=schemas.BankCardInDB)
 def create_card(card: schemas.BankCardCreate, db: Session = Depends(get_db)):
     db_card = models.BankCard(
         bank_id=card.bank_id,
@@ -31,3 +27,23 @@ def create_card(card: schemas.BankCardCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_card)
     return db_card
+
+
+@router.get("/banks/{bank_id}", response_model=schemas.BankWithCards)
+def read_bank(bank_id: int, db: Session = Depends(get_db)):
+    db_bank = db.query(models.Bank).filter(models.Bank.id == bank_id).first()
+    if db_bank is None:
+        raise HTTPException(status_code=404, detail="Bank not found")
+    # It's important to query for the bank cards here to make sure they are included in the response.
+    db_bank.cards = db.query(models.BankCard).filter(models.BankCard.bank_id == bank_id).all()
+    return db_bank
+
+
+@router.delete("/banks/{bank_id}/cards/{card_id}")
+def delete_card(bank_id: int, card_id: int, db: Session = Depends(get_db)):
+    db_card = db.query(models.BankCard).filter(models.BankCard.bank_id == bank_id).filter(models.BankCard.cardID == card_id).first()
+    if db_card is None:
+        raise HTTPException(status_code=404, detail="Card not found")
+    db.delete(db_card)
+    db.commit()
+    return {"message": "Card deleted"}

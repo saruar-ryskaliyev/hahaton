@@ -17,7 +17,7 @@ class BankCard(Base):
     cardID = Column(Integer, primary_key=True, index=True)
     bank_id = Column(Integer, ForeignKey('banks.id'))
     card_type = Column(String)
-    category = Column(PickleType)  # This will be used to store an array of strings
-    special_offer = Column(PickleType)  # This will also store an array of strings
+    category = Column(PickleType)  
+    special_offer = Column(PickleType) 
 
     bank = relationship("Bank", back_populates="cards")
