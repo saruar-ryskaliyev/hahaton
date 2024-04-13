@@ -1,7 +1,18 @@
-from bs4 import BeautifulSoup
-import requests
+# main.py
+from fastapi import FastAPI, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from database import engine, SessionLocal
 
-url = 'https://halykbank.kz/cards'
-cards = {}
-response = requests.get(url)
-soup = BeautifulSoup(response.text, 'html.parser')
+
+
+app = FastAPI()
+
+
+
+
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+
+
+
