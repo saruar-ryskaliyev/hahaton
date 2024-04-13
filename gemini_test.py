@@ -5,15 +5,15 @@ import json
 
 # URL of the webpage you want to parse
 urls = (
-    "https://eubank.kz/list-of-cards/"
-    # "https://jusan.kz/en/cards",
-    # "https://bank.forte.kz/cards",
-    # "https://halykbank.kz/cards",
-    # "https://www.bcc.kz/personal/cards/"
+    "https://eubank.kz/list-of-cards/",
+    "https://jusan.kz/en/cards",
+    "https://bank.forte.kz/cards",
+    "https://halykbank.kz/cards",
+    "https://www.bcc.kz/personal/cards/"
 )
 
 # Send a GET request to the URL
-response = requests.get(urls[0])
+response = requests.get(urls[1])
 
 # Parse the content of the webpage with BeautifulSoup
 soup = BeautifulSoup(response.content, 'html.parser')
@@ -37,19 +37,15 @@ for link in links:
             # Append the dictionary to the link_list
             link_list.append(link_dict)
 
-
-
-
 links_string = "".join(str(link_list))
-
-
 
 genai.configure(api_key='AIzaSyBs3c846AoPQ06gmSKt0DtIcswpOp8iwKg')
 
 model = genai.GenerativeModel('gemini-1.5-pro-latest')
 
-response = model.generate_content(links_string + "Return me from this dictionary, links that lead to the information about card, return page of each individual card.  Return it like json: Cardname: URL.")
+response = model.generate_content(
+    links_string + "Return me from this dictionary, links that lead to the information about card, return page of each individual card.  Return it like json: Cardname: URL.")
 
-
-
-print(response.text)
+response_json = json.loads(str(response.text).replace("json", "").replace("`", "").strip())
+print(response_json)
+print(type(response_json))
