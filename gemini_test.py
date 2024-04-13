@@ -1,10 +1,11 @@
 import google.generativeai as genai
 import requests
 from bs4 import BeautifulSoup
+import json
 
 # URL of the webpage you want to parse
 urls = (
-    'https://halykbank.kz/cards',
+    "https://halykbank.kz/cards",
 )
 
 # Send a GET request to the URL
@@ -39,6 +40,9 @@ genai.configure(api_key='AIzaSyBs3c846AoPQ06gmSKt0DtIcswpOp8iwKg')
 
 model = genai.GenerativeModel('gemini-1.5-pro-latest')
 
-response = model.generate_content(links_string + "Return me from this dictionary, links that lead to the information about card, return page of each individual card. ")
+response = model.generate_content(links_string + "Return me from this dictionary, links that lead to the information about card, return page of each individual card.  Return it like json: Cardname: URL.")
+
+# json_data = json.loads(response.text)
+
 
 print(response.text)
