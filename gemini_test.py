@@ -5,7 +5,11 @@ import json
 
 # URL of the webpage you want to parse
 urls = (
-    "https://halykbank.kz/cards",
+    "https://eubank.kz/list-of-cards/"
+    # "https://jusan.kz/en/cards",
+    # "https://bank.forte.kz/cards",
+    # "https://halykbank.kz/cards",
+    # "https://www.bcc.kz/personal/cards/"
 )
 
 # Send a GET request to the URL
@@ -22,6 +26,7 @@ link_list = []
 
 # Loop through each link and extract link text and URL
 for link in links:
+
     link_text = link.text.strip()  # Extract link text and remove any leading/trailing whitespace
     if 'href' in link.attrs:
         link_url = link['href']  # Extract link URL
@@ -33,7 +38,10 @@ for link in links:
             link_list.append(link_dict)
 
 
+
+
 links_string = "".join(str(link_list))
+
 
 
 genai.configure(api_key='AIzaSyBs3c846AoPQ06gmSKt0DtIcswpOp8iwKg')
@@ -42,7 +50,6 @@ model = genai.GenerativeModel('gemini-1.5-pro-latest')
 
 response = model.generate_content(links_string + "Return me from this dictionary, links that lead to the information about card, return page of each individual card.  Return it like json: Cardname: URL.")
 
-# json_data = json.loads(response.text)
 
 
 print(response.text)
