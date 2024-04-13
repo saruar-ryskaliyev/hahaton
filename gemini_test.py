@@ -44,7 +44,9 @@ genai.configure(api_key='AIzaSyBs3c846AoPQ06gmSKt0DtIcswpOp8iwKg')
 model = genai.GenerativeModel('gemini-1.5-pro-latest')
 
 response = model.generate_content(
-    links_string + "Return me from this dictionary, links that lead to the information about card, return page of each individual card.  Return it like json: Cardname: URL.")
+    links_string + "\nReturn me from this dictionary, links that lead to the information about card, "+
+                   "return page of each individual card.  Return it like json: Cardname: URL." +
+    "Exclude links to pages as 'Debit cards' or 'Credit cards'")
 
 response_json = json.loads(str(response.text).replace("json", "").replace("`", "").strip())
 print(response_json)
