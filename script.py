@@ -9,8 +9,10 @@ def fromLinkToData(url):
 def request(text):
     genai.configure(api_key='AIzaSyBs3c846AoPQ06gmSKt0DtIcswpOp8iwKg')
     model = genai.GenerativeModel('gemini-1.5-pro-latest')
-    response = model.generate_content("Give me info about the cashbacks and bonuses for this card. I need you to return me as a json.\n" + text)
+    response = model.generate_content("give me the info in the following format: *name*:*percent of a cashback*\n" + text)
     return response.text
 
-text = fromLinkToData('https://halykbank.kz/card/dostavka')
+text = fromLinkToData('https://halykbank.kz/index.php/en/card/digital')
 print(request(text))
+
+
